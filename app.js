@@ -5,6 +5,7 @@ const sequelize = require("./db/connection");
 const authenticateBasicAuth = require("./middleware/authenticateBasicAuth");
 const User = require("./models/User");
 const assignmentRoutes = require("./routes/assignments");
+const healthzRouter = require("./routes/healthz"); // Import the healthz route
 const bcrypt = require("bcrypt");
 const bodyParser = require("body-parser");
 const app = express();
@@ -57,19 +58,8 @@ fs.createReadStream("/opt/users.csv")
 // Mount assignment routes with authentication middleware
 app.use("/v1/assignments", authenticateBasicAuth, assignmentRoutes);
 
-// Sync the database at startup
-// sequelize
-//   .sync({ force: true })
-//   .then(() => {
-//     console.log("Database synchronized successfully.");
-
-// Additional setup for your Express routes and middleware can be added here
-// Example:
-// app.get('/api/users', (req, res) => {
-//   // Handle GET request for users
-//   // ...
-//   res.json(users);
-// });
+// Mount healthz route
+app.use("/healthz", healthzRouter); // Mount the healthz route under /healthz path
 
 // Start the Express server
 app.listen(port, async () => {
@@ -79,8 +69,5 @@ app.listen(port, async () => {
     console.log("Database synchronized successfully.");
   });
 });
-// .catch((error) => {
-//   console.error("Error synchronizing database:", error);
-// });
 
 module.exports = app;
