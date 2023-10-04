@@ -14,7 +14,7 @@ jobs:
         image: postgres:latest
         env:
           POSTGRES_USER: ${{ secrets.postgres }}
-          POSTGRES_PASSWORD: ${{ secrets.Flender@1 }}
+          POSTGRES_PASSWORD: ${{ secrets.Flender1 }}
           POSTGRES_DB: ${{ secrets.kashishdesai }}
         ports:
           - 5433:5433
