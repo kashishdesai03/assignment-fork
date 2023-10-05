@@ -65,7 +65,7 @@ app.use("/healthz", healthzRouter); // Mount the healthz route under /healthz pa
 app.listen(port, async () => {
   console.log(`Server is running on port ${port}`);
   // usersCreate();
-  await sequelize.sync({ alter: true }).then(() => {
+  await sequelize.sync({ alter: true }).then(async () => {
     console.log("Database synchronized successfully.");
   });
 });
