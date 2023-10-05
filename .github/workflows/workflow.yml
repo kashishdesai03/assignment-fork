@@ -26,6 +26,12 @@ jobs:
       - name: create & configure
         run: |
           touch .env  
+          echo ${{ secrets.port }}
+          echo ${{ secrets.dbName }}
+          echo ${{ secrets.dbUser }}
+          echo ${{ secrets.dbPassword }}
+          echo ${{ secrets.dbPort }}
+          echo ${{ secrets.dialect }}
           echo PORT=${{ secrets.port }} >> .env
           echo DB_NAME=${{ secrets.dbName }} >> .env
           echo DB_USER=${{ secrets.dbUser }} >> .env
