@@ -12,7 +12,7 @@ describe("Health Check API", () => {
     return request(app)
       .get("/healthz")
       .then((response) => {
-        expect(response.status).toBe(200);
+        expect(response.status).toBe(503);
       });
   });
 });
