@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  build:
+  connect-remote:
     runs-on: ubuntu-latest
 
     services:
@@ -22,14 +22,16 @@ jobs:
     strategy:
       matrix:
         node-version: [16.x]
-    env:
-      PORT: ${{ secrets.port }}
-      DB_NAME: ${{ secrets.dbName }}
-      DB_USER: ${{ secrets.dbUser }}
-      DB_PASSWORD: ${{ secrets.dbPassword }}
-      DB_HOST: ${{ secrets.dbPort }}
-      DB_DIALECT: ${{ secrets.dialect }}
     steps:
+      - name:
+      - run: |
+        touch .env  
+        PORT: ${{ secrets.port }} >> .env
+        echo DB_NAME=${{ secrets.dbName }} >> .env
+        echo DB_USER=${{ secrets.dbUser }} >> .env
+        echo DB_PASSWORD=${{ secrets.dbPassword }} >> .env
+        echo DB_HOST=${{ secrets.dbPort }} >> .env
+        echo DB_DIALECT=${{ secrets.dialect }} >> .env
       - uses: actions/checkout@v1
       - name: Use Node.js
         uses: actions/setup-node@v3

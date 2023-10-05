@@ -1,4 +1,6 @@
 const express = require("express");
+const env = require("dotenv");
+env.config();
 const { Pool } = require("pg");
 const pool = new Pool({
   user: process.env.DB_USER, // Corrected variable name
