@@ -24,7 +24,7 @@ jobs:
         node-version: [16.x]
     steps:
       - name: create & configure
-      - run: |
+        run: |
         touch .env  
         PORT: ${{ secrets.port }} >> .env
         echo DB_NAME=${{ secrets.dbName }} >> .env
