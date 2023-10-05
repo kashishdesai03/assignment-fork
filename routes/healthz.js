@@ -3,11 +3,11 @@ const env = require("dotenv");
 env.config();
 const { Pool } = require("pg");
 const pool = new Pool({
-  user: process.env.DB_USER, // Corrected variable name
-  host: process.env.DB_HOST, // Corrected variable name
-  database: process.env.DB_NAME, // Corrected variable name
-  password: process.env.DB_PASSWORD, // Corrected variable name
-  port: process.env.DB_PORT, // Corrected variable name
+  user: process.env.DBUSER, // Corrected variable name
+  host: process.env.PORT, // Corrected variable name
+  database: process.env.DBNAME, // Corrected variable name
+  password: process.env.DBPASSWORD, // Corrected variable name
+  port: process.env.DBPORT, // Corrected variable name
 });
 const port = 8080;
 

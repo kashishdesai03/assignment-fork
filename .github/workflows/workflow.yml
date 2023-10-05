@@ -13,9 +13,9 @@ jobs:
       postgres:
         image: postgres:latest
         env:
-          POSTGRES_USER: ${{ secrets.postgres }}
-          POSTGRES_PASSWORD: ${{ secrets.Flender1 }}
-          POSTGRES_DB: ${{ secrets.kashishdesai }}
+          POSTGRES_USER: ${{ secrets.DBUSER }}
+          POSTGRES_PASSWORD: ${{ secrets.DBPASSWORD }}
+          POSTGRES_DB: ${{ secrets.DBNAME }}
         ports:
           - 5433:5433
 
@@ -26,12 +26,12 @@ jobs:
       - name: create & configure
         run: |
           touch .env  
-          echo PORT=${{ secrets.port }} >> .env
-          echo DB_NAME=${{ secrets.dbName }} >> .env
-          echo DB_USER=${{ secrets.dbUser }} >> .env
-          echo DB_PASSWORD=${{ secrets.dbPassword }} >> .env
-          echo DB_HOST=${{ secrets.dbPort }} >> .env
-          echo DB_DIALECT=${{ secrets.dialect }} >> .env
+          echo PORT=${{ secrets.PORT }} >> .env
+          echo DBNAME=${{ secrets.DBNAME }} >> .env
+          echo DBUSER=${{ secrets.DBUSER }} >> .env
+          echo DBPASSWORD=${{ secrets.DBPASSWORD }} >> .env
+          echo DBPORT=${{ secrets.DBPORT }} >> .env
+          echo DIALECT=${{ secrets.DIALECT }} >> .env
       - uses: actions/checkout@v1
       - name: Use Node.js
         uses: actions/setup-node@v3
