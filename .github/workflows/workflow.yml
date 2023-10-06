@@ -43,6 +43,9 @@ jobs:
           echo DBPORT=${{ secrets.DBPORT }} >> .env
           echo DIALECT=${{ secrets.DIALECT }} >> .env
 
+      - name: Check Port Reachability
+        run: telnet 127.0.0.1 5432
+
       - name: Run tests
         run: npm test
         env:
