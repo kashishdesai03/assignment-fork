@@ -23,33 +23,19 @@ jobs:
       matrix:
         node-version: [16.x]
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: ${{ matrix.node-version }}
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Set up .env file
+      - name: create & configure
         run: |
-          echo PORT=${{ secrets.PORT }} >> .env
+          touch .env  
+          echo PORT=5433 >> .env
           echo DBNAME=${{ secrets.DBNAME }} >> .env
           echo DBUSER=${{ secrets.DBUSER }} >> .env
           echo DBPASSWORD=${{ secrets.DBPASSWORD }} >> .env
-          echo DBPORT=${{ secrets.DBPORT }} >> .env
+          echo DBPORT=5433 >> .env
           echo DIALECT=${{ secrets.DIALECT }} >> .env
-
-      - name: Run tests
-        run: npm test
-        env:
-          NODE_ENV: test
-          PORT: ${{ secrets.PORT }}
-          DBPORT: ${{ secrets.DBPORT }}
-          DBNAME: ${{ secrets.DBNAME }}
-          DBUSER: ${{ secrets.DBUSER }}
-          DBPASSWORD: ${{ secrets.DBPASSWORD }}
-          DIALECT: ${{ secrets.DIALECT }}
+      - uses: actions/checkout@v1
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: npm install
+      - run: npm test
