@@ -34,6 +34,7 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+
       - name: Set up .env file
         run: |
           echo PORT=${{ secrets.PORT }} >> .env
