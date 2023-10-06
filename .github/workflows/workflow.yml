@@ -1,9 +1,8 @@
 name: CI
 
 on:
-  pull_request:
-    branches:
-      - main
+  push:
+    branches: [ "main" ]
 
 jobs:
   connect-remote:
@@ -13,6 +12,7 @@ jobs:
       postgres:
         image: postgres:latest
         env:
+<<<<<<< HEAD
           POSTGRES_USER: ${{ secrets.DBUSER }}
           POSTGRES_PASSWORD: ${{ secrets.DBPASSWORD }}
           POSTGRES_DB: ${{ secrets.DBNAME }}
@@ -22,6 +22,15 @@ jobs:
     strategy:
       matrix:
         node-version: [16.x]
+=======
+          POSTGRES_DB: "kashishdesai"  # PostgreSQL database name
+          POSTGRES_USER: "postgres"  # PostgreSQL username
+          POSTGRES_PASSWORD: "Flender1"  # PostgreSQL password
+        ports:
+          - 5432:5432
+        options: --health-cmd="pg_isready" --health-interval=10s --health-timeout=5s --health-retries=3
+
+>>>>>>> 3fde8f7989c3cfc4622310be23e9305724c73eca
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -29,6 +38,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
+<<<<<<< HEAD
           node-version: ${{ matrix.node-version }}
 
       - name: Install dependencies
@@ -56,3 +66,12 @@ jobs:
           DBUSER: ${{ secrets.DBUSER }}
           DBPASSWORD: ${{ secrets.DBPASSWORD }}
           DIALECT: ${{ secrets.DIALECT }}
+=======
+          node-version: 14  # Use an existing Node.js version
+
+      - name: Install dependencies
+        run: npm install
+        
+      - name: Run tests
+        run: npm test
+>>>>>>> 3fde8f7989c3cfc4622310be23e9305724c73eca
