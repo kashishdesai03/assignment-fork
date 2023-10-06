@@ -17,7 +17,10 @@ jobs:
           POSTGRES_PASSWORD: "Flender1" # PostgreSQL password
         ports:
           - 5432:5432
+<<<<<<< HEAD
         options: --health-cmd="pg_isready" --health-interval=10s --health-timeout=5s --health-retries=3
+=======
+>>>>>>> c427aa0683bcfa87139704e497f8a3c15581e7c8
 
     steps:
       - name: Checkout code
@@ -31,5 +34,20 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+<<<<<<< HEAD
+=======
+      - name: Set up .env file
+        run: |
+          echo PORT=${{ secrets.PORT }} >> .env
+          echo DBNAME=${{ secrets.DBNAME }} >> .env
+          echo DBUSER=${{ secrets.DBUSER }} >> .env
+          echo DBPASSWORD=${{ secrets.DBPASSWORD }} >> .env
+          echo DBPORT=${{ secrets.DBPORT }} >> .env
+          echo DIALECT=${{ secrets.DIALECT }} >> .env
+
+      - name: Check Port Reachability
+        run: telnet 127.0.0.1 5432
+
+>>>>>>> c427aa0683bcfa87139704e497f8a3c15581e7c8
       - name: Run tests
         run: npm test
