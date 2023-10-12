@@ -52,4 +52,11 @@ const Assignment = sequelize.define(
 );
 // Other fields as per your assignment requirements
 
+Assignment.associate = (models) => {
+  Assignment.belongsTo(models.User, {
+    foreignKey: {
+      allowNull: false,
+    },
+  });
+};
 module.exports = Assignment;

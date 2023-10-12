@@ -9,7 +9,7 @@ const healthzRouter = require("./routes/healthz"); // Import the healthz route
 const bcrypt = require("bcrypt");
 const bodyParser = require("body-parser");
 const app = express();
-const port = process.env.PORT || 8080;
+const port = 8080;
 
 app.use(express.json());
 app.use(bodyParser.json());
