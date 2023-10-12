@@ -22,11 +22,15 @@ router.post("/", authenticateBasicAuth, async (req, res) => {
   const { name, points, num_of_attemps, deadline } = req.body;
   console.log("test", req.body);
   try {
+    // Extract the authenticated user from req object
+    const authenticatedUser = req.user;
+
     const assignment = await Assignment.create({
       name,
       points,
       num_of_attemps,
       deadline,
+      UserId: authenticatedUser.id,
     });
     res.status(201).json(assignment);
   } catch (error) {
@@ -54,15 +58,23 @@ router.get("/:id", authenticateBasicAuth, async (req, res) => {
 // PUT /v1/assignments/:id - Update assignment (Authenticated)
 router.put("/:id", authenticateBasicAuth, async (req, res) => {
   const { id } = req.params;
-  const { name, points, num_of_attemps, deadline } = req.body;
+  const { name, points, num_of_attempts, deadline } = req.body;
+  
   try {
     const assignment = await Assignment.findByPk(id);
+
     if (assignment) {
+      // Check if the authenticated user is the creator of the assignment
+      if (assignment.UserId !== req.user.id) {
+        return res.sendStatus(403); // Forbidden
+      }
+
       // Update assignment fields
       assignment.name = name;
       assignment.points = points;
-      assignment.num_of_attemps = num_of_attemps;
+      assignment.num_of_attempts = num_of_attempts;
       assignment.deadline = deadline;
+
       await assignment.save();
       res.sendStatus(204); // No Content
     } else {
@@ -80,6 +92,11 @@ router.delete("/:id", authenticateBasicAuth, async (req, res) => {
   try {
     const assignment = await Assignment.findByPk(id);
     if (assignment) {
+      // Check if the authenticated user is the creator of the assignment
+      if (assignment.UserId !== req.user.id) {
+        return res.sendStatus(403); // Forbidden
+      }
+
       await assignment.destroy();
       res.sendStatus(204); // No Content
     } else {
