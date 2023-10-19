@@ -23,6 +23,18 @@ jobs:
       matrix:
         node-version: [16.x]
     steps:
+      - name:
+      - run: |
+        touch .env  
+        PORT: ${{ secrets.port }} >> .env
+        echo DB_NAME=${{ secrets.dbName }} >> .env
+        echo DB_USER=${{ secrets.dbUser }} >> .env
+        echo DB_PASSWORD=${{ secrets.dbPassword }} >> .env
+        echo DB_HOST=${{ secrets.dbPort }} >> .env
+        echo DB_DIALECT=${{ secrets.dialect }} >> .env
+      - uses: actions/checkout@v1
+      - name: Use Node.js
+        uses: actions/setup-node@v3
       - name: Checkout code
         uses: actions/checkout@v2
 
