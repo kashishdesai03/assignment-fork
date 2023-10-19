@@ -58,8 +58,8 @@ router.get("/:id", authenticateBasicAuth, async (req, res) => {
 // PUT /v1/assignments/:id - Update assignment (Authenticated)
 router.put("/:id", authenticateBasicAuth, async (req, res) => {
   const { id } = req.params;
-  const { name, points, num_of_attempts, deadline } = req.body;
-  
+  const { name, points, num_of_attemps, deadline } = req.body;
+
   try {
     const assignment = await Assignment.findByPk(id);
 
@@ -72,7 +72,7 @@ router.put("/:id", authenticateBasicAuth, async (req, res) => {
       // Update assignment fields
       assignment.name = name;
       assignment.points = points;
-      assignment.num_of_attempts = num_of_attempts;
+      assignment.num_of_attemps = num_of_attemps;
       assignment.deadline = deadline;
 
       await assignment.save();
