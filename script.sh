@@ -20,8 +20,8 @@ sudo apt install -y postgresql postgresql-contrib
 sudo systemctl start postgresql
 sudo systemctl enable postgresql
 sudo systemctl status postgresql
-sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD 'pramod';"
-sudo -u postgres createdb db1
+sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD 'Flender1';"
+sudo -u postgres createdb kashishdesai
 
 
 # Installing unzip

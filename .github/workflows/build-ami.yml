@@ -32,6 +32,17 @@ jobs:
       - name: Packer init
         run: |
           packer init ami.pkr.hcl
+
+      - name: create and configure
+        run: |
+          touch .env
+          echo DBPORT=${{ secrets.DBPORT }} >> .env
+          echo PORT=${{ secrets.PORT }} >> .env
+          echo DIALECT=${{ secrets.DIALECT }} >> .env
+          echo DBUSER=${{ secrets.DBUSER }} >> .env
+          echo DBPASSWORD=${{ secrets.DBPASSWORD }}>> .env
+          echo DBNAME=${{ secrets.DBNAME }} >> .env
+
       - name: Build Artifact
         run: |
           zip -r webapp.zip . -x ".git*" -x ".github*"
