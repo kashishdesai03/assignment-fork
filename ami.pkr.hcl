@@ -98,7 +98,7 @@ build {
 
   provisioner "file" {
     source      = "webapp.zip"
-    destination = "/home/admin/opt/webapp.zip"
+    destination = "/opt/"
   }
 
   provisioner "shell" {
