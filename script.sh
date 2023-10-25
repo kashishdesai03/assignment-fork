@@ -34,3 +34,27 @@ rm webapp.zip
 cd webapp
 mv users.csv /opt/
 npm i
+
+# Starting the service
+
+sudo sh -c "echo '[Unit]
+Description=My NPM Service
+Requires=cloud-init.target
+After=cloud-final.service
+
+[Service]
+EnvironmentFile=/etc/environment
+Type=simple
+User=admin
+WorkingDirectory=/opt/webapp
+ExecStart=/usr/bin/npm run start
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=cloud-init.target' | sudo tee /etc/systemd/system/webapp.service"
+
+sudo systemctl daemon-reload
+sudo systemctl enable webapp
+sudo systemctl start webapp
+sudo systemctl status webapp
