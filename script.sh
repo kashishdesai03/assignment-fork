@@ -28,6 +28,8 @@ sudo -u postgres createdb kashishdesai
 echo_info "INSTALLING-UNZIP"
 sudo apt install -y unzip
 
+sudo chown -R admin:admin /opt/
+
 cd /opt
 unzip webapp.zip
 rm webapp.zip
@@ -46,8 +48,8 @@ After=cloud-final.service
 EnvironmentFile=/etc/environment
 Type=simple
 User=admin
-WorkingDirectory=/opt/webapp
-ExecStart=/usr/bin/node /opt/webapp/app.js
+WorkingDirectory=/opt/
+ExecStart=/usr/bin/node /opt/app.js
 Restart=always
 RestartSec=10
 
