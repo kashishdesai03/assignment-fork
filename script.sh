@@ -47,7 +47,7 @@ EnvironmentFile=/etc/environment
 Type=simple
 User=admin
 WorkingDirectory=/opt/webapp
-ExecStart=/usr/bin/npm run start
+ExecStart=/usr/bin/node /opt/webapp/app.js
 Restart=always
 RestartSec=10
 
