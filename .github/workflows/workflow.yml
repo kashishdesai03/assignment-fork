@@ -2,11 +2,12 @@ name: CI
 
 on:
   pull_request:
-    branches:
-      - main
+    branches: [main]
+
+  workflow_dispatch:
 
 jobs:
-  connect-remote:
+  build:
     runs-on: ubuntu-latest
 
     services:
@@ -22,46 +23,18 @@ jobs:
     strategy:
       matrix:
         node-version: [16.x]
+    env:
+      PORT: ${{ secrets.PORT }}
+      DBNAME: ${{ secrets.DBNAME }}
+      DBUSER: ${{ secrets.DBUSER }}
+      DBPASSWORD: ${{ secrets.DBPASSWORD }}
+      DBPORT: ${{ secrets.DBPORT }}
+      DIALECT: ${{ secrets.DIALECT }}
     steps:
-      - name:
-      - run: |
-        touch .env  
-        echo ${{ secrets.port }} >> .env
-        echo DB_NAME=${{ secrets.dbName }} >> .env
-        echo DB_USER=${{ secrets.dbUser }} >> .env
-        echo DB_PASSWORD=${{ secrets.dbPassword }} >> .env
-        echo DB_HOST=${{ secrets.dbPort }} >> .env
-        echo DB_DIALECT=${{ secrets.dialect }} >> .env
       - uses: actions/checkout@v1
       - name: Use Node.js
         uses: actions/setup-node@v3
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Set up .env file
-        run: |
-          echo PORT=${{ secrets.PORT }} >> .env
-          echo DBNAME=${{ secrets.DBNAME }} >> .env
-          echo DBUSER=${{ secrets.DBUSER }} >> .env
-          echo DBPASSWORD=${{ secrets.DBPASSWORD }} >> .env
-          echo DBPORT=${{ secrets.DBPORT }} >> .env
-          echo DIALECT=${{ secrets.DIALECT }} >> .env
-
-      - name: Run tests
-        run: npm test
-        env:
-          NODE_ENV: test
-          PORT: ${{ secrets.PORT }}
-          DBPORT: ${{ secrets.DBPORT }}
-          DBNAME: ${{ secrets.DBNAME }}
-          DBUSER: ${{ secrets.DBUSER }}
-          DBPASSWORD: ${{ secrets.DBPASSWORD }}
-          DIALECT: ${{ secrets.DIALECT }}
+      - run: npm install
+      - run: npm test
