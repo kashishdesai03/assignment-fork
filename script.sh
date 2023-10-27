@@ -14,21 +14,9 @@ source ~/.bashrc
 echo_info "INSTALLING-NODEJS"
 sudo apt install -y nodejs npm
 
-# Installing PostgresSQL
-echo_info "INSTALLING-POSTGRESQL"
-sudo apt install -y postgresql postgresql-contrib
-sudo systemctl start postgresql
-sudo systemctl enable postgresql
-sudo systemctl status postgresql
-sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD 'Flender1';"
-sudo -u postgres createdb kashishdesai
-
-
 # Installing unzip
 echo_info "INSTALLING-UNZIP"
 sudo apt install -y unzip
-
-sudo chown -R admin:admin /opt/
 
 cd /opt
 unzip webapp.zip
