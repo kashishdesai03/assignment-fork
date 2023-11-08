@@ -91,6 +91,9 @@ build {
       "CHECKPOINT_DISABLE=1",
       "DEBIAN_FRONTEND=noninteractive"
     ]
+    inline = [
+      "sudo chown csye6225:csye6225 -R /opt"
+    ]
   }
 
   provisioner "file" {
