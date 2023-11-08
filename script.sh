@@ -55,7 +55,7 @@ sudo dpkg -i amazon-cloudwatch-agent.deb
 sudo sh -c "echo '[Unit]
 Description=My NPM Service
 Requires=cloud-init.target
-After=network.target
+After=cloud-final.service
 
 [Service]
 EnvironmentFile=/etc/environment
@@ -68,7 +68,7 @@ RestartSec=10
 
 [Install]
 WantedBy=cloud-init.target'
-WantedBy=multi-user.target"
+WantedBy=multi-user.target | sudo tee /etc/systemd/system/webapp.service"
 
 sudo systemctl daemon-reload
 sudo systemctl enable webapp
