@@ -57,7 +57,7 @@ EnvironmentFile=/etc/environment
 Type=simple
 User=admin
 WorkingDirectory=/opt/
-ExecStart=/usr/local/bin/node /opt/app.js
+ExecStart=/usr/bin/node /opt/app.js
 Restart=always
 RestartSec=10
 
