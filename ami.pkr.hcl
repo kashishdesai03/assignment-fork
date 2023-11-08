@@ -91,9 +91,6 @@ build {
       "CHECKPOINT_DISABLE=1",
       "DEBIAN_FRONTEND=noninteractive"
     ]
-    inline = [
-      "sudo chown admin:admin /opt"
-    ]
   }
 
   provisioner "file" {
