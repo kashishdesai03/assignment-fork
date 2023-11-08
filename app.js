@@ -6,6 +6,7 @@ const authenticateBasicAuth = require("./middleware/authenticateBasicAuth");
 const User = require("./models/User");
 const assignmentRoutes = require("./routes/assignments");
 const healthzRouter = require("./routes/healthz"); // Import the healthz route
+const logger = require("./logger.js");
 const bcrypt = require("bcrypt");
 const bodyParser = require("body-parser");
 const app = express();
@@ -34,7 +35,7 @@ fs.createReadStream("./opt/users.csv")
           password: bcrypt.hashSync(row.password, 12),
           // password: hashedPassword,
         });
-        console.log("User updated successfully:", row.email);
+        logger.info("User updated successfully:", row.email);
       } else {
         // If user doesn't exist, create a new user
         await User.create({
@@ -44,14 +45,14 @@ fs.createReadStream("./opt/users.csv")
           // password: hashedPassword,
           password: row.password,
         });
-        console.log("User created successfully:", row.email);
+        logger.info("User created successfully:", row.email);
       }
     } catch (error) {
-      console.error("Error creating/updating user account:", error);
+      logger.error("Error creating/updating user account:", error);
     }
   })
   .on("end", () => {
-    console.log("CSV file processing finished.");
+    logger.info("CSV file processing finished.");
   });
 // });
 
@@ -61,12 +62,18 @@ app.use("/v1/assignments", authenticateBasicAuth, assignmentRoutes);
 // Mount healthz route
 app.use("/healthz", healthzRouter); // Mount the healthz route under /healthz path
 
+// Error handling middleware
+app.use((err, req, res, next) => {
+  logger.error(`Error occurred: ${err.stack}`);
+  res.status(500).send("Something went wrong!");
+});
+
 // Start the Express server
 app.listen(port, async () => {
-  console.log(`Server is running on port ${port}`);
+  logger.info(`Server is running on port ${port}`);
   // usersCreate();
   await sequelize.sync({ alter: true }).then(async () => {
-    console.log("Database synchronized successfully.");
+    logger.info("Database synchronized successfully.");
   });
 });
 
