@@ -85,17 +85,6 @@ source "amazon-ebs" "webapp" {
 build {
   sources = ["source.amazon-ebs.webapp"]
 
-
-  provisioner "shell" {
-    environment_vars = [
-      "CHECKPOINT_DISABLE=1",
-      "DEBIAN_FRONTEND=noninteractive"
-    ]
-    inline = [
-      
-    ]
-  }
-
   provisioner "file" {
     source      = "webapp.zip"
     destination = "/opt/"
