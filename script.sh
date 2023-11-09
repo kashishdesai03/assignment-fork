@@ -18,17 +18,12 @@ sudo apt install -y nodejs npm
 echo_info "INSTALLING-UNZIP"
 sudo apt install -y unzip
 
-sudo groupadd csye6225
-sudo useradd -s /bin/false -g csye6225 -d /opt/csye6225 -m csye6225
-
 cd /opt
 unzip webapp.zip
 rm webapp.zip
 cd webapp
 mv users.csv /opt/
 npm i
-
-sudo chown csye6225:csye6225 -R /opt/webapp
 
 # Download the CloudWatch Agent installer
 echo_info "DOWNLOADING-CLOUDWATCH-AGENT"
@@ -60,15 +55,14 @@ After=cloud-final.service
 [Service]
 EnvironmentFile=/etc/environment
 Type=simple
-User=csye6225
+User=admin
 WorkingDirectory=/opt/
 ExecStart=/usr/bin/node /opt/app.js
 Restart=always
 RestartSec=10
 
 [Install]
-WantedBy=cloud-init.target'
-WantedBy=multi-user.target | sudo tee /etc/systemd/system/webapp.service"
+WantedBy=cloud-init.target' | sudo tee /etc/systemd/system/webapp.service"
 
 sudo systemctl daemon-reload
 sudo systemctl enable webapp
