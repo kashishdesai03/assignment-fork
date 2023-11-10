@@ -44,7 +44,7 @@ async function basicAuth(req, res, next) {
       .send();
   }
 
-  req.user = user;
+  req.user = { id: user.id, email: user.email, UserId: user.id };
 
   next();
 }

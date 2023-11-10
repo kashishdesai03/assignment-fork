@@ -1,6 +1,7 @@
 // Assignment.js (inside models folder)
 const { DataTypes } = require("sequelize");
 const sequelize = require("../db/connection");
+const User = require("./User");
 
 const Assignment = sequelize.define(
   "Assignment",
@@ -45,18 +46,19 @@ const Assignment = sequelize.define(
       allowNull: false,
       defaultValue: DataTypes.NOW,
     },
+    UserId: {
+      type: DataTypes.UUID,
+      references: {
+        model: User,
+        key: "id",
+      },
+    },
   },
   {
     timestamps: false, // Disable createdAt and updatedAt fields
   }
 );
-// Other fields as per your assignment requirements
 
-Assignment.associate = (models) => {
-  Assignment.belongsTo(models.User, {
-    foreignKey: {
-      allowNull: false,
-    },
-  });
-};
+Assignment.belongsTo(User, { foreignKey: "UserId" });
+
 module.exports = Assignment;
