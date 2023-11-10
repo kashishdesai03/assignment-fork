@@ -84,7 +84,7 @@ router.put("/:id", authenticateBasicAuth, async (req, res) => {
 
     if (assignment) {
       // Check if the authenticated user is the creator of the assignment
-      if (assignment.UserId !== req.user.id) {
+      if (assignment.UserId !== req.user.UserId) {
         logger.warn(
           "Unauthorized attempt to update assignment:",
           req.user.email
@@ -115,6 +115,11 @@ router.put("/:id", authenticateBasicAuth, async (req, res) => {
   }
 });
 
+// PATCH /v1/assignments/:id - Update assignment (Method Not Allowed)
+router.patch("/:id", (req, res) => {
+  res.sendStatus(405); // Method Not Allowed
+});
+
 // DELETE /v1/assignments/:id - Delete assignment (Authenticated)
 router.delete("/:id", authenticateBasicAuth, async (req, res) => {
   const { id } = req.params;
@@ -122,7 +127,7 @@ router.delete("/:id", authenticateBasicAuth, async (req, res) => {
     const assignment = await Assignment.findByPk(id);
     if (assignment) {
       // Check if the authenticated user is the creator of the assignment
-      if (assignment.UserId !== req.user.id) {
+      if (assignment.UserId !== req.user.UserId) {
         logger.warn(
           "Unauthorized attempt to delete assignment:",
           req.user.email
