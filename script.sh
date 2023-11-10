@@ -61,7 +61,7 @@ Restart=always
 RestartSec=10
 
 [Install]
-WantedBy=cloud-init.target'
+WantedBy=cloud-init.target
 WantedBy=multi-user.target' | sudo tee /etc/systemd/system/webapp.service"
 
 sudo systemctl daemon-reload
