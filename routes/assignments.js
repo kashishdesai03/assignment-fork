@@ -1,7 +1,9 @@
 const express = require("express");
 const Assignment = require("../models/Assignment");
+const Submission = require("../models/Submission");
 const authenticateBasicAuth = require("../middleware/authenticateBasicAuth");
 const logger = require("../logger.js");
+const { postUrlToSNSTopic } = require("../snsService");
 
 const router = express.Router();
 
@@ -149,6 +151,66 @@ router.delete("/:id", authenticateBasicAuth, async (req, res) => {
     logger.error("Error deleting assignment:", error);
     client.increment(req.method + "_" + req.path);
     res.sendStatus(500); // Internal Server Error
+  }
+});
+
+// POST /v1/assignments/:id/submission - Submit Assignment (Authenticated)
+router.post("/:id/submission", authenticateBasicAuth, async (req, res) => {
+  const { id } = req.params;
+  const { submission_url } = req.body;
+
+  try {
+    // Check if the assignment with the given ID exists
+    const assignment = await Assignment.findByPk(id);
+    if (!assignment) {
+      return res.status(400).send("Assignment not found.");
+    }
+
+    // Check if the assignment is still open for submissions based on the deadline
+    const currentDateTime = new Date();
+    if (assignment.deadline < currentDateTime) {
+      return res.status(400).send("Assignment submission deadline has passed.");
+    }
+
+    // Check if the user has exceeded the allowed number of attempts
+    if (assignment.num_of_attempts <= 0) {
+      return res
+        .status(403)
+        .send("Exceeded the maximum number of submission attempts.");
+    }
+
+    // Check if the user making the submission is the creator of the assignment
+    if (assignment.UserId !== req.user.id) {
+      return res.status(401).send("Unauthorized access.");
+    }
+
+    // Example: Posting submission URL to SNS Topic
+    const userEmail = req.user.email; // Use the authenticated user's email
+    await postUrlToSNSTopic(submission_url, userEmail);
+
+    // Example: Save the submission to the database
+    const submission = await Submission.create({
+      assignment_id: id,
+      user_id: req.user.id,
+      submission_url,
+    });
+
+    // Update the attempts count for the assignment
+    await assignment.decrement("num_of_attempts");
+
+    // Example response (modify based on your schema)
+    const submissionResponse = {
+      id: submission.id,
+      assignment_id: submission.assignment_id,
+      submission_url: submission.submission_url,
+      submission_date: submission.submission_date.toISOString(),
+      submission_updated: submission.submission_updated.toISOString(),
+    };
+
+    res.status(201).json(submissionResponse);
+  } catch (error) {
+    console.error("Submission Error:", error.message);
+    res.status(500).send("Submission failed.");
   }
 });
 
