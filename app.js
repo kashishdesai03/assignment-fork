@@ -12,6 +12,9 @@ const bodyParser = require("body-parser");
 const app = express();
 const port = 8080;
 
+const AWS = require("aws-sdk");
+const sns = new AWS.SNS();
+
 app.use(express.json());
 app.use(bodyParser.json());
 // Read user data from the CSV file and create or update user accounts
@@ -36,6 +39,7 @@ fs.createReadStream("./opt/users.csv")
           // password: hashedPassword,
         });
         logger.info("User updated successfully:", row.email);
+        notifyUserUpdate(existingUser.email);
       } else {
         // If user doesn't exist, create a new user
         await User.create({
@@ -46,6 +50,7 @@ fs.createReadStream("./opt/users.csv")
           password: row.password,
         });
         logger.info("User created successfully:", row.email);
+        notifyNewUser(row.email);
       }
     } catch (error) {
       logger.error("Error creating/updating user account:", error);
@@ -54,7 +59,34 @@ fs.createReadStream("./opt/users.csv")
   .on("end", () => {
     logger.info("CSV file processing finished.");
   });
-// });
+
+// Function to send SNS notification for user update
+function notifyUserUpdate(userEmail) {
+  const message = `User updated: ${userEmail}`;
+  publishToSns(message);
+}
+
+// Function to send SNS notification for new user creation
+function notifyNewUser(userEmail) {
+  const message = `New user created: ${userEmail}`;
+  publishToSns(message);
+}
+
+// Function to publish message to SNS
+function publishToSns(message) {
+  const params = {
+    Message: message,
+    TopicArn: "arn:aws:sns:us-east-1:475039881460:mySNSTopic-b4136e8",
+  };
+
+  sns.publish(params, (err, data) => {
+    if (err) {
+      logger.error("Error publishing message to SNS:", err);
+    } else {
+      logger.info("Message published to SNS:", data);
+    }
+  });
+}
 
 // Mount assignment routes with authentication middleware
 app.use("/v1/assignments", authenticateBasicAuth, assignmentRoutes);
