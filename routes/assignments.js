@@ -178,10 +178,10 @@ router.post("/:id/submission", authenticateBasicAuth, async (req, res) => {
     }
 
     // Check if the user has exceeded the allowed number of attempts
-    if (assignment.num_of_attempts <= 0) {
+    if (assignment.num_of_attemps <= 0) {
       logger.error(
         "Exceeded the maximum number of submission attempts:",
-        assignment.num_of_attempts
+        assignment.num_of_attemps
       );
       return res
         .status(403)
@@ -211,7 +211,7 @@ router.post("/:id/submission", authenticateBasicAuth, async (req, res) => {
     });
 
     // Update the attempts count for the assignment
-    await assignment.decrement("num_of_attempts");
+    await assignment.decrement("num_of_attemps");
 
     // Example response (modify based on your schema)
     const submissionResponse = {
