@@ -3,7 +3,7 @@ const Assignment = require("../models/Assignment");
 const Submission = require("../models/Submission");
 const authenticateBasicAuth = require("../middleware/authenticateBasicAuth");
 const logger = require("../logger.js");
-const { postUrlToSNSTopic } = require("../snsService");
+const postUrlToSNSTopic = require("../snsService");
 
 const router = express.Router();
 
@@ -163,17 +163,26 @@ router.post("/:id/submission", authenticateBasicAuth, async (req, res) => {
     // Check if the assignment with the given ID exists
     const assignment = await Assignment.findByPk(id);
     if (!assignment) {
+      logger.error("Assignment not found.", id);
       return res.status(400).send("Assignment not found.");
     }
 
     // Check if the assignment is still open for submissions based on the deadline
     const currentDateTime = new Date();
     if (assignment.deadline < currentDateTime) {
+      logger.error(
+        "Assignment submission deadline has passed:",
+        assignment.deadline
+      );
       return res.status(400).send("Assignment submission deadline has passed.");
     }
 
     // Check if the user has exceeded the allowed number of attempts
     if (assignment.num_of_attempts <= 0) {
+      logger.error(
+        "Exceeded the maximum number of submission attempts:",
+        assignment.num_of_attempts
+      );
       return res
         .status(403)
         .send("Exceeded the maximum number of submission attempts.");
@@ -181,6 +190,12 @@ router.post("/:id/submission", authenticateBasicAuth, async (req, res) => {
 
     // Check if the user making the submission is the creator of the assignment
     if (assignment.UserId !== req.user.id) {
+      logger.error(
+        "Unauthorized access. User:",
+        req.user.id,
+        "Assignment User:",
+        assignment.UserId
+      );
       return res.status(401).send("Unauthorized access.");
     }
 
@@ -207,9 +222,10 @@ router.post("/:id/submission", authenticateBasicAuth, async (req, res) => {
       submission_updated: submission.submission_updated.toISOString(),
     };
 
+    logger.info("Submission successful. Response:", submissionResponse);
     res.status(201).json(submissionResponse);
   } catch (error) {
-    console.error("Submission Error:", error.message);
+    logger.error("Submission Error:", error.message);
     res.status(500).send("Submission failed.");
   }
 });
