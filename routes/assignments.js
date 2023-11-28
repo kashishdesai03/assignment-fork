@@ -3,7 +3,8 @@ const Assignment = require("../models/Assignment");
 const Submission = require("../models/Submission");
 const authenticateBasicAuth = require("../middleware/authenticateBasicAuth");
 const logger = require("../logger.js");
-const postUrlToSNSTopic = require("../snsService");
+const AWS = require("aws-sdk");
+const sns = new AWS.SNS();
 
 const router = express.Router();
 
@@ -201,16 +202,28 @@ router.post("/:id/submission", authenticateBasicAuth, async (req, res) => {
 
     // Example: Posting submission URL to SNS Topic
     const userEmail = req.user.email; // Use the authenticated user's email
-    await postUrlToSNSTopic(submission_url, userEmail);
 
-    // Example: Save the submission to the database
+    try {
+      const topicArn = snsTopic.arn; // Replace with your actual SNS topic ARN
+      const message = `Submission URL: ${submission_url} for user: ${userEmail}`;
+      const params = {
+        TopicArn: topicArn,
+        Message: message,
+      };
+
+      await sns.publish(params).promise();
+      console.log("Message published successfully");
+    } catch (error) {
+      console.error("Error publishing message to SNS:", error);
+      throw error;
+    }
+
     const submission = await Submission.create({
       assignment_id: id,
       user_id: req.user.id,
       submission_url,
     });
 
-    // Update the attempts count for the assignment
     await assignment.decrement("num_of_attemps");
 
     // Example response (modify based on your schema)
