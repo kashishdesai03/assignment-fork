@@ -209,39 +209,45 @@ router.post("/:id/submission", authenticateBasicAuth, async (req, res) => {
 
     try {
       const topicArn = process.env.TopicArn;
-      const message = `Submission URL: ${submission_url} for user: ${userEmail}`;
+      const snsMessage = {
+        userId: req.user.id,
+        emailId: userEmail,
+        assignmentId: id,
+        submissionUrl: submission_url,
+      };
       const params = {
         TopicArn: topicArn,
-        Message: message,
+        Message: JSON.stringify(snsMessage),
       };
 
       await sns.publish(params).promise();
       console.log("Message published successfully");
+
+      const submission = await Submission.create({
+        assignment_id: id,
+        user_id: req.user.id,
+        submission_url,
+      });
+
+      await assignment.decrement("num_of_attemps");
+
+      const submissionResponse = {
+        id: submission.id,
+        assignment_id: submission.assignment_id,
+        submission_url: submission.submission_url,
+        submission_date: submission.submission_date.toISOString(),
+        submission_updated: submission.submission_updated.toISOString(),
+      };
+
+      logger.info("Submission successful. Response:", submissionResponse);
+      res.status(201).json(submissionResponse);
     } catch (error) {
       console.error("Error publishing message to SNS:", error);
-      throw error;
+      logger.error("Submission Error:", error.message);
+      res.status(500).send("Submission failed.");
     }
-
-    const submission = await Submission.create({
-      assignment_id: id,
-      user_id: req.user.id,
-      submission_url,
-    });
-
-    await assignment.decrement("num_of_attemps");
-
-    const submissionResponse = {
-      id: submission.id,
-      assignment_id: submission.assignment_id,
-      submission_url: submission.submission_url,
-      submission_date: submission.submission_date.toISOString(),
-      submission_updated: submission.submission_updated.toISOString(),
-    };
-
-    logger.info("Submission successful. Response:", submissionResponse);
-    res.status(201).json(submissionResponse);
   } catch (error) {
-    logger.error("Submission Error:", error.message);
+    logger.error("Outer catch block. Submission Error:", error.message);
     res.status(500).send("Submission failed.");
   }
 });
