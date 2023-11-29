@@ -5,6 +5,7 @@ const authenticateBasicAuth = require("../middleware/authenticateBasicAuth");
 const logger = require("../logger.js");
 const AWS = require("aws-sdk");
 const sns = new AWS.SNS();
+require("dotenv").config();
 
 const router = express.Router();
 
