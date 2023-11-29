@@ -205,11 +205,10 @@ router.post("/:id/submission", authenticateBasicAuth, async (req, res) => {
       return res.status(401).send("Unauthorized access.");
     }
 
-    // Example: Posting submission URL to SNS Topic
-    const userEmail = req.user.email; // Use the authenticated user's email
+    const userEmail = req.user.email;
 
     try {
-      const topicArn = process.env.TopicArn; // Replace with your actual SNS topic ARN
+      const topicArn = process.env.TopicArn;
       const message = `Submission URL: ${submission_url} for user: ${userEmail}`;
       const params = {
         TopicArn: topicArn,
@@ -231,7 +230,6 @@ router.post("/:id/submission", authenticateBasicAuth, async (req, res) => {
 
     await assignment.decrement("num_of_attemps");
 
-    // Example response (modify based on your schema)
     const submissionResponse = {
       id: submission.id,
       assignment_id: submission.assignment_id,
