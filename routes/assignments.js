@@ -204,7 +204,7 @@ router.post("/:id/submission", authenticateBasicAuth, async (req, res) => {
     const userEmail = req.user.email; // Use the authenticated user's email
 
     try {
-      const topicArn = snsTopic.arn; // Replace with your actual SNS topic ARN
+      const topicArn = process.env.TopicArn; // Replace with your actual SNS topic ARN
       const message = `Submission URL: ${submission_url} for user: ${userEmail}`;
       const params = {
         TopicArn: topicArn,
