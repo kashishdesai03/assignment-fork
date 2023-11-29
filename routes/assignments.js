@@ -4,8 +4,12 @@ const Submission = require("../models/Submission");
 const authenticateBasicAuth = require("../middleware/authenticateBasicAuth");
 const logger = require("../logger.js");
 const AWS = require("aws-sdk");
-const sns = new AWS.SNS();
 require("dotenv").config();
+
+const region = process.env.AWS_REGION;
+AWS.config.update({ region });
+
+const sns = new AWS.SNS();
 
 const router = express.Router();
 
