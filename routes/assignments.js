@@ -244,10 +244,20 @@ router.post("/:id/submission", authenticateBasicAuth, async (req, res) => {
     } catch (error) {
       console.error("Error publishing message to SNS:", error);
       logger.error("Submission Error:", error.message);
+
+      // Send a failure email
+      const emailStatus = "Failure";
+      await sendEmailViaMailgun(userEmail, emailStatus);
+
       res.status(500).send("Submission failed.");
+      return;
     }
   } catch (error) {
     logger.error("Outer catch block. Submission Error:", error.message);
+
+    const emailStatus = "Failure";
+    await sendEmailViaMailgun(userEmail, emailStatus);
+
     res.status(500).send("Submission failed.");
   }
 });
