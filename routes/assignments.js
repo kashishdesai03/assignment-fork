@@ -165,6 +165,14 @@ router.post("/:id/submission", authenticateBasicAuth, async (req, res) => {
   const { id } = req.params;
   const { submission_url } = req.body;
 
+  // Validate file extension
+  if (!submission_url || !submission_url.endsWith(".zip")) {
+    logger.error("Invalid file extension. Only .zip files are allowed.");
+    return res
+      .status(400)
+      .send("Invalid file extension. Only .zip files are allowed.");
+  }
+
   try {
     // Check if the assignment with the given ID exists
     const assignment = await Assignment.findByPk(id);
