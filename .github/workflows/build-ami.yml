@@ -76,3 +76,47 @@ jobs:
         run: |
           ami_id=${{ env.AMI_ID }}
           aws ec2 modify-image-attribute --image-id $AMI_ID --launch-permission "{\"Add\":[{\"UserId\":\"$DEMO_ACCOUNT_ID\"}]}"
+
+      - name: Configure AWS credentials for demo account
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_DEMO }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_DEMO }}
+          aws-region: us-east-1
+
+      - name: Update AWS Launch Template Config and Refresh Instances
+        run: |
+
+          ASG_NAME="csye6225_asg"
+          LAUNCH_CONFIG="asg_launch_config"
+
+          IMAGE=$(jq -r '.builds[-1].artifact_id' manifest.json | cut -d':' -f2)
+
+          IMAGE_ID=$(jq -n \
+            --arg img "$IMAGE" \
+            '{"ImageId": $img}')
+
+          aws ec2 create-launch-template-version \
+            --launch-template-name "$LAUNCH_CONFIG" \
+            --version-description updateAMI --source-version 1 \
+            --launch-template-data="$IMAGE_ID"
+
+          aws autoscaling update-auto-scaling-group --auto-scaling-group-name $ASG_NAME \
+            --launch-template LaunchTemplateName="$LAUNCH_CONFIG",Version='$Latest'
+
+          aws autoscaling start-instance-refresh \
+            --auto-scaling-group-name $ASG_NAME
+
+          while true; do
+            instance_refresh_status=$(aws autoscaling describe-instance-refreshes --auto-scaling-group-name $ASG_NAME \
+              --query "InstanceRefreshes[0].Status" --output text)
+            if [ "$instance_refresh_status" = "Successful" ]; then
+              echo "Instance refresh successful!"
+              break
+            fi
+            if [ "$instance_refresh_status" = "Cancelling" ] || [ "$instance_refresh_status" = "Cancelled" ] || [ "$instance_refresh_status" = "Failed" ]; then
+              echo "Instance refresh failed!"
+              exit 1
+            fi
+            sleep 10
+          done
