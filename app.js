@@ -89,7 +89,7 @@ function publishToSns(message) {
 }
 
 // Mount assignment routes with authentication middleware
-app.use("/v1/assignments", authenticateBasicAuth, assignmentRoutes);
+app.use("/v2/assignments", authenticateBasicAuth, assignmentRoutes);
 
 // Mount healthz route
 app.use("/healthz", healthzRouter); // Mount the healthz route under /healthz path
